@@ -1,0 +1,49 @@
+{
+  "name": "vscode-github-tracker",
+  "displayName": "vscode-github-tracker",
+  "description": "A VS Code extension that tracks coding contributions more accurately.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.93.1"
+  },
+  "categories": [
+    "Other",
+    "Workspace"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeTracking.enable",
+        "title": "Enable Code Tracking"
+      },
+      {
+        "command": "codeTracking.disable",
+        "title": "Disable Code Tracking"
+      },
+      {
+        "command": "codeTracking.setGitHubToken",
+        "title": "Set GitHub Token"
+      },
+      {
+        "command": "codeTracking.setRepoDir",
+        "title": "Set Repository Directory"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "pnpm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.95.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "eslint": "^9.16.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "@octokit/rest": "^18.5.3" 
+  }
+}
