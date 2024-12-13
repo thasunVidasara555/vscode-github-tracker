@@ -14,8 +14,7 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 - Generate logs only if there is been a commit to a branch
 
 ## Issues 
-- rejected promise not handled within 1 second: HttpError: Repository creation failed.: {"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}
-    > may be be fixed by getting the existing repo's url first and if it does not exist try to create a new repo
+- Does not push the updates
 - if the repo is not cloned correctly, it misses the logs
     > may be be fixed by saving them in a temp    
 

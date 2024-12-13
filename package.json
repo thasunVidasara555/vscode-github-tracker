@@ -29,6 +29,11 @@
            "default": "",                                                                                                                                
            "description": "Directory where the repository will be cloned."                                                                               
          }, 
+         "codeTracking.githubUsername": {                                                                                                                    
+       "type": "string",                                                                                                                                 
+       "default": "",                                                                                                                                    
+       "description": "GitHub username for authenticating API requests."                                                                                 
+     },
         "codeTracking.logInterval": {
           "type": "number",
           "default": 0.5,
@@ -52,7 +57,11 @@
       {
         "command": "codeTracking.setRepoDir",
         "title": "Set Repository Directory"
-      }
+      },
+      {                                                                                                                                                   
+       "command": "codeTracking.setGitHubUsername",                                                                                                      
+       "title": "Set GitHub Username"                                                                                                                    
+     }
     ]
   },
   "scripts": {

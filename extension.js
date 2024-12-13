@@ -6,56 +6,66 @@ const { Octokit } = require("@octokit/rest"); // Import Octokit for GitHub API i
 let octokit; // Octokit instance for GitHub API
 let repoDir; // Directory where the repository will be cloned
 
-async function createRepo(repoName) {                                                                                                                                   
-  // Attempt to create a new repository                                                                                                                                 
-  try {                                                                                                                                                                 
-    const { data } = await octokit.repos.createForAuthenticatedUser({                                                                                                   
-      name: repoName,                                                                                                                                                   
-      private: false,                                                                                                                                                   
-    });                                                                                                                                                                 
-    return data.clone_url;                                                                                                                                              
-  } catch (error) {                                                                                                                                                     
-    // If the repository creation fails with an error message indicating that the repository name already exists on the user's account                                  
-    if (error.status === 422 && error.errors && error.errors[0].message === "name already exists on this account") {                                                    
-      // Retrieve the existing repository and return the clone URL                                                                                                      
-      try {                                                                                                                                                             
-        const { data } = await octokit.repos.get({                                                                                                                      
-          owner: octokit.username,                                                                                                                                      
-          repo: repoName,                                                                                                                                               
-        });                                                                                                                                                             
-        vscode.window.showInformationMessage(`Using existing repository "${repoName}" as the default for logging.`);                                                    
-        return data.clone_url;                                                                                                                                          
-      } catch (error) {                                                                                                                                                 
-        // If the repository retrieval fails, throw an error                                                                                                            
-        vscode.window.showErrorMessage(`Failed to retrieve repository: ${error.message}`);                                                                              
-        throw error;                                                                                                                                                    
-      }                                                                                                                                                                 
-    } else {                                                                                                                                                            
-      // If the error is not a repository name conflict error, re-throw the error                                                                                       
-      throw error;                                                                                                                                                      
-    }                                                                                                                                                                   
-  }                                                                                                                                                                     
+async function createRepo(repoName) {              
+  const config = vscode.workspace.getConfiguration("codeTracking");                                                                                     
+   const username = config.get("githubUsername");                                                                                                     
+  // Attempt to retrieve the existing repository                                                                                                        
+  try {                                                                                                                                                 
+    const { data } = await octokit.repos.get({                                                                                                          
+      owner: username,                                                                                                                          
+      repo: repoName,                                                                                                                                   
+    });                                                                                                                                                 
+    vscode.window.showInformationMessage(`Using existing repository "${repoName}" as the default for logging.`);                                        
+    return data.clone_url;                                                                                                                              
+  } catch (error) {                                                                                                                                     
+    // If the repository retrieval fails, it means the repository does not exist                                                                        
+    // So, try to create a new repository                                                                                                               
+    return createNewRepo(repoName, username);                                                                                                                     
+  }                                                                                                                                                     
 }
 
-async function setGitHubToken() {
-  // Prompt the user to enter their GitHub token
-  const token = await vscode.window.showInputBox({
-    prompt: "Enter your GitHub token",
-    ignoreFocusOut: true,
-  });
-  if (token) {
-    octokit = new Octokit({ auth: token }); // Initialize Octokit with the token
-    await vscode.workspace
-      .getConfiguration()
-      .update("codeTracking.githubToken", token.toString(), vscode.ConfigurationTarget.Global);
+async function createNewRepo(repoName, username) {                                                                                                                
+  try {                                                                                                                                                 
+    const { data } = await octokit.repos.createForAuthenticatedUser({                                                                                   
+      name: repoName,                                                                                                                                   
+      private: false,                                                                                                                                   
+    });                                                                                                                                                 
+    return data.clone_url;                                                                                                                              
+  } catch (error) {       
+    console.log(`https://github.com/${username}/${repoName}.git`)                                                                                                                                                                              
+      return `https://github.com/${username}/${repoName}.git`;                                                                                        
+  }                                                                                                                                                     
+}
 
-    vscode.window.showInformationMessage("GitHub token set. Please reload the window to apply changes.", "Reload")
-      .then(selection => {
-        if (selection === "Reload") {
-          vscode.commands.executeCommand("workbench.action.reloadWindow");
-        }
-      });
-  }
+function isValidToken(githubToken) {                                   
+  // #NOTE: EDIT Later                                                                                 
+  return typeof githubToken === 'string' && githubToken.trim() !== '';                                                                                  
+}
+
+async function setGitHubToken() {                                                                                                                       
+  const config = vscode.workspace.getConfiguration("codeTracking");                                                                                     
+  let githubToken = config.get("githubToken");                                                                                                          
+                                                                                                                                                        
+  // Check if the token is valid or empty                                                                                                               
+  if (!githubToken || !isValidToken(githubToken)) {                                                                                                     
+    // Prompt the user to enter their GitHub token                                                                                                      
+    const token = await vscode.window.showInputBox({                                                                                                    
+      prompt: "Enter your GitHub token",                                                                                                                
+      ignoreFocusOut: true,                                                                                                                             
+    });                                                                                                                                                 
+                                                                                                                                                        
+    if (token) {                                                                                                                                        
+      // Update the token in the configuration                                                                                                          
+      await vscode.workspace                                                                                                                            
+        .getConfiguration()                                                                                                                             
+        .update("codeTracking.githubToken", token.toString(), vscode.ConfigurationTarget.Global);                                                       
+    }                                                                                                                                                   
+  }                                                                                                                                                     
+}
+
+function initializeOctokit(token, username) {                                                                                                           
+  octokit = new Octokit({ auth: token, username: username });                                                                                           
+  console.log("GitHub token and username retrieved and Octokit initialized.");                                                                          
 }
 
 async function setRepoDir() {
@@ -72,9 +82,25 @@ async function setRepoDir() {
   }
 }
 
-function initializeOctokit(token) {
-  octokit = new Octokit({ auth: token });
-  console.log("GitHub token retrieved and Octokit initialized.");
+async function setGitHubUsername() {                                                                                                                    
+  const config = vscode.workspace.getConfiguration("codeTracking");                                                                                     
+  let githubUsername = config.get("githubUsername");                                                                                                    
+                                                                                                                                                        
+  // Check if the username is valid or empty                                                                                                            
+  if (!githubUsername) {                                                                                            
+    // Prompt the user to enter their GitHub username                                                                                                   
+    const username = await vscode.window.showInputBox({                                                                                                 
+      prompt: "Enter your GitHub username",                                                                                                             
+      ignoreFocusOut: true,                                                                                                                             
+    });                                                                                                                                                 
+                                                                                                                                                        
+    if (username) {                                                                                                                                     
+      // Update the username in the configuration                                                                                                       
+      await vscode.workspace                                                                                                                            
+        .getConfiguration()                                                                                                                             
+        .update("codeTracking.githubUsername", username.toString(), vscode.ConfigurationTarget.Global);                                                 
+    }                                                                                                                                                   
+  }                                                                                                                                                     
 }
 
 // Activates the extension, setting up commands and intervals for logging.
@@ -88,23 +114,40 @@ function activate(context) {
       setGitHubToken
     )
   );
+  context.subscriptions.push(                                                                                                                           
+    vscode.commands.registerCommand(                                                                                                                    
+      "codeTracking.setGitHubUsername",                                                                                                                 
+      setGitHubUsername                                                                                                                                 
+    )                                                                                                                                                   
+  );
 
-  const config = vscode.workspace.getConfiguration("codeTracking"); // Get configuration settings
-  let githubToken = config.get("githubToken");
+  const config = vscode.workspace.getConfiguration("codeTracking"); // Get configuration settings                                                       
+   let githubToken = config.get("githubToken");                                                                                                          
+   let githubUsername = config.get("githubUsername");                                                                                                    
+                                                                                                                                                         
+   if (!githubToken) {                                                                                                                                   
+     vscode.window.showInformationMessage("GitHub token is not set. Please enter it now.");                                                              
+     setGitHubToken().then(() => {                                                                                                                       
+       githubToken = config.get("githubToken");                                                                                                          
+       if (!githubToken) {                                                                                                                               
+         vscode.window.showErrorMessage("GitHub token is still not set. Please set it using the command palette.");                                      
+         return;                                                                                                                                         
+       }                                                                                                                                                 
+     });                                                                                                                                                 
+   }                                                                                                                                                     
+                                                                                                                                                         
+   if (!githubUsername) {                                                                                                                                
+     vscode.window.showInformationMessage("GitHub username is not set. Please enter it now.");                                                           
+     setGitHubUsername().then(() => {                                                                                                                    
+       githubUsername = config.get("githubUsername");                                                                                                    
+       if (!githubUsername) {                                                                                                                            
+         vscode.window.showErrorMessage("GitHub username is still not set. Please set it using the command palette.");                                   
+         return;                                                                                                                                         
+       }                                                                                                                                                 
+     });                                                                                                                                                 
+   }
 
-  if (!githubToken) {
-    vscode.window.showInformationMessage("GitHub token is not set. Please enter it now.");
-    setGitHubToken().then(() => {
-      githubToken = config.get("githubToken");
-      if (!githubToken) {
-        vscode.window.showErrorMessage("GitHub token is still not set. Please set it using the command palette.");
-        return;
-      }
-      initializeOctokit(githubToken);
-    });
-  } else {
-    initializeOctokit(githubToken);
-  }
+   initializeOctokit(githubToken, githubUsername);
 
   repoDir = config.repoDir || `${require("os").homedir()}/github-tracker`;
 
@@ -129,23 +172,28 @@ function activate(context) {
 
   // Start the logging interval
   setInterval(async () => {
-    const workspaceFolders = vscode.workspace.workspaceFolders; // Get the workspace folders
-    if (!workspaceFolders) return;
-
-    const gitDir = `${repoDir}/.git`; // Path to the .git directory
-    let repoUrl;
-    if (!fs.existsSync(gitDir)) {
-      repoUrl = await createRepo("github-tracker"); // Create a new repository if it doesn't exist
-      // Clone the repository to the specified directory
-      exec(`git clone ${repoUrl} ${repoDir}`, (err, stdout, stderr) => {
-        if (err) {
-          vscode.window.showErrorMessage(`Git clone error: ${stderr}`);
-          return;
-        } else {
-          console.log("Git clone success:", stdout);
-        }
-      });
-    }
+    const workspaceFolders = vscode.workspace.workspaceFolders; // Get the workspace folders                                                              
+   if (!workspaceFolders) return;                                                                                                                        
+                                                                                                                                                         
+   const gitDir = `${repoDir}/.git`; // Path to the .git directory                                                                                       
+   let repoUrl;                                                                                                                                          
+   if (!fs.existsSync(gitDir)) {                                                                                                                         
+     // Check if the repoDir directory is a valid Git repository                                                                                         
+     try {                                                                                                                                               
+       execSync(`git -C ${repoDir} rev-parse --is-inside-work-tree`, { stdio: 'ignore' });                                                               
+     } catch (error) {                                                                                                                                   
+       // If the repoDir directory is not a valid Git repository, clone the repository                                                                   
+       repoUrl = await createRepo("github-tracker");                                                                                                     
+       exec(`git clone ${repoUrl} ${repoDir}`, (err, stdout, stderr) => {                                                                                
+         if (err) {                                                                                                                                      
+           vscode.window.showErrorMessage(`Git clone error: ${stderr}`);                                                                                 
+           return;                                                                                                                                       
+         } else {                                                                                                                                        
+           console.log("Git clone success:", stdout);                                                                                                    
+         }                                                                                                                                               
+       });                                                                                                                                               
+     }                                                                                                                                                   
+   }
 
     // Run git log to get commit history since the specified interval
     exec(
