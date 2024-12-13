@@ -10,9 +10,32 @@
     "Other",
     "Workspace"
   ],
-  "activationEvents": [],
   "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Code Tracking Configuration",
+      "properties": {
+        "codeTracking.githubToken": {                                                                                                                   
+           "type": "string",                                                                                                                             
+           "default": "",                                                                                                                                
+           "description": "GitHub token for authenticating API requests."                                                                                
+         },                                                                                                                                              
+         "codeTracking.repoDir": {                                                                                                                       
+           "type": "string",                                                                                                                             
+           "default": "",                                                                                                                                
+           "description": "Directory where the repository will be cloned."                                                                               
+         }, 
+        "codeTracking.logInterval": {
+          "type": "number",
+          "default": 0.5,
+          "description": "Interval in minutes for logging commits."
+        }
+      }
+    },
     "commands": [
       {
         "command": "codeTracking.enable",
