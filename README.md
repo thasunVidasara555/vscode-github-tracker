@@ -9,12 +9,11 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 - **Transparency:** Maintains an open and meticulous record of your daily contributions.
 - **Support for Work Reviews:** Provides an activity timeline for job reviews, promotions, or retrospectives.
 
-## Upcoming
+## Upcoming(considered)
 - Sum-up by LLM
 - Generate logs only if there is been a commit to a branch
 
 ## Issues 
-- Does not push the updates
 - if the repo is not cloned correctly, it misses the logs
     > may be be fixed by saving them in a temp    
 

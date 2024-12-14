@@ -38,7 +38,7 @@ async function createNewRepo(repoName, username) {
 }
 
 function isValidToken(githubToken) {                                   
-  // #NOTE: EDIT Later                                                                                 
+  // #NOTE: Figure out later                                                                                 
   return typeof githubToken === 'string' && githubToken.trim() !== '';                                                                                  
 }
 
@@ -119,10 +119,7 @@ async function checkGitHubRepo(githubRepoDir) {
     });                                                                                                                                                                                   
   } catch (error) {                                                                                                                                                                       
     // If the directory is not a valid Git repository, check if it exists and is not empty                                                                                                
-    if (fs.existsSync(githubRepoDir) && fs.readdirSync(githubRepoDir).length > 0) {                                                                                                       
-      vscode.window.showErrorMessage(`Destination path '${githubRepoDir}' already exists and is not an empty directory.`);                                                                
-      return;                                                                                                                                                                             
-    }                                                                                                                                                                                     
+    if (fs.existsSync(githubRepoDir) && fs.readdirSync(githubRepoDir).length > 0) return;                                                                                                                                                                          
                                                                                                                                                                                           
     // If the directory does not exist or is empty, clone the repository                                                                                                                  
     const githubRepoUrl = await createRepo("github-tracker");                                                                                                                             
@@ -145,7 +142,7 @@ async function checkGitHubRepo(githubRepoDir) {
 
 // Activates the extension, setting up commands and intervals for logging.
 function activate(context) {                                                                                                                            
-  vscode.window.showInformationMessage("Code Tracking Extension Activated!");                                                                           
+  // vscode.window.showInformationMessage("Code Tracking Extension Activated!");                                                                           
                                                                                                                                                         
   // Register commands for setting GitHub token and repository directory                                                                                
   context.subscriptions.push(                                                                                                                           
@@ -179,7 +176,7 @@ function activate(context) {
   let githubUsername = config.get("githubUsername");                                                                                                    
                                                                                                                                                         
   if (!githubToken) {                                                                                                                                   
-    vscode.window.showInformationMessage("GitHub token is not set. Please enter it now.");                                                              
+    vscode.window.showErrorMessage("GitHub token is not set. Please enter it now.");                                                              
     setGitHubToken().then(() => {                                                                                                                       
       githubToken = config.get("githubToken");                                                                                                          
       if (!githubToken) {                                                                                                                               
