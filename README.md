@@ -4,10 +4,9 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 
 ## Features
 
-- **Automatic Logging:** Logs coding activity every 30 minutes.
-- **Git Integration:** Automatically commits logs to a dedicated `code-tracking` branch.
+- **Automatic Logging:** Logs coding activity every `n` minutes, where n is the time period which is decided by user.
+- **Git Integration:** Automatically commits logs to a dedicated `code-tracking` repo.
 - **Transparency:** Maintains an open and meticulous record of your daily contributions.
-- **Support for Work Reviews:** Provides an activity timeline for job reviews, promotions, or retrospectives.
 
 ## Upcoming(considered)
 - Sum-up by LLM
@@ -20,7 +19,7 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 ## How It Works
 
 1. Creates a `.code-tracking.log` file in a seperate repo.
-2. Logs your activity every 30 minutes with a timestamp and workspace path.
+2. Logs your activity every `n` minutes with a timestamp and workspace path.
 
 ## Installation
 
@@ -37,11 +36,11 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 1. Open a workspace in VS Code.
 2. Start coding!
 3. Logs will appear in a `.code-tracking.log` file in the workspace folder.
-4. View your contributions in the `code-tracking` branch.
+4. View your contributions in the `code-tracking` repo or repo directory.
 
 ## Commands
 
-- **Enable Tracking:** Automatically starts logging your activity (runs on activation).
+- **Enable Tracking:** Automatically starts logging your activity (runs on activation and startup of vscode).
 - **Disable Tracking:** Stops the auto-logging process.
 
 ## Development
