@@ -36,7 +36,7 @@
      },
         "codeTracking.logInterval": {
           "type": "number",
-          "default": 0.5,
+          "default": 30,
           "description": "Interval in minutes for logging commits."
         }
       }
