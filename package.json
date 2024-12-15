@@ -70,9 +70,12 @@
     ]
   },
   "scripts": {
-    "lint": "eslint .",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./", 
+    "watch": "tsc -watch -p ./", 
     "pretest": "pnpm run lint",
-    "test": "vscode-test"
+    "test": "node ./out/test/runTest.js",
+    "lint": "eslint . --ext .ts,.js"
   },
   "devDependencies": {
     "@types/vscode": "^1.95.0",
