@@ -4,7 +4,7 @@
   "description": "A VS Code extension that tracks coding contributions more accurately.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.96.0"
+    "vscode": "^1.95.0"
   },
   "categories": [
     "Other",
@@ -75,13 +75,16 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.95.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
-    "eslint": "^9.16.0",
+    "@types/node": "20.x", // Use the latest major version
+    "@types/vscode": "^1.95.0", // Match VS Code engine
+    "@types/mocha": "^10.0.1",
+    "@types/simple-git": "^3.16.0",
+    "@octokit/rest": "^19.0.7",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "@octokit/rest": "^19.0.7",
-    "simple-git": "^3.17.0"
+    "eslint": "^8.45.0",
+  },
+  "dependencies": {
+    "simple-git": "^3.17.0" // You also need this in dependencies
   }
 }
