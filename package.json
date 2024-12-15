@@ -75,11 +75,17 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-"@types/vscode": "^1.95.0",
+    "@types/vscode": "^1.95.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "eslint": "^9.16.0",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron":
-	}
+    "@vscode/test-electron": "^2.4.1",
+    "@octokit/rest": "^19.0.7",
+    "simple-git": "^3.17.0",
+    "typescript": "^5.1.6", 
+  },
+    "dependencies": {
+        "simple-git": "^3.17.0"
+    }
 }
