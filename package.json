@@ -75,8 +75,8 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/node": "20.x", // Use the latest major version
-    "@types/vscode": "^1.95.0", // Match VS Code engine
+    "@types/node": "20.x", 
+    "@types/vscode": "^1.95.0",
     "@types/mocha": "^10.0.1",
     "@types/simple-git": "^3.16.0",
     "@octokit/rest": "^19.0.7",
@@ -85,6 +85,6 @@
     "eslint": "^8.45.0",
   },
   "dependencies": {
-    "simple-git": "^3.17.0" // You also need this in dependencies
+    "simple-git": "^3.17.0"
   }
 }
