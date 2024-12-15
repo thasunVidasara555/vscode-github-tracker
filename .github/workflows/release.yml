@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Compile
-        run: npm run compile
+      #- name: Compile
+      #  run: npm run compile
 
       - name: Package extension
         run: vsce package
