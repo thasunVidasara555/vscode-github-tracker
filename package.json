@@ -71,7 +71,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run lint",
-    "lint": "eslint . --ext .js"
+    "lint": "eslint . -c .js"
   },
   "devDependencies": {
     "@types/vscode": "^1.95.0",
