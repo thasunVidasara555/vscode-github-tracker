@@ -4,9 +4,15 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 
 ## Features
 
-- **Automatic Logging:** Logs coding activity every `n` minutes, where n is the time period which is decided by user.
-- **Git Integration:** Automatically commits logs to a dedicated `code-tracking` repo.
-- **Transparency:** Maintains an open and meticulous record of your daily contributions.
+*   **Automatic Tracking:** Logs your coding activity in the background.
+*   **Private Repository:** Uses a private GitHub repository for secure log storage.
+*   **Configurable Interval:** Customize the logging frequency.
+*   **Detailed Logs:** Records commit messages, timestamps, *and uncommitted file changes*.
+*   **Handles Multiple Workspaces:** Tracks activity across multiple open workspace folders.
+*   **Robust Error Handling:** Includes error handling and logging for informative messages.
+*   **Logs Uncommitted Changes:** Tracks file changes even before they are committed.
+*   **Automatic Git Repository Initialization:** Automatically initializes a Git repository in the workspace folder if one doesn't exist.
+*   **Temporary Log Storage:** Stores logs temporarily if the GitHub repository is unavailable and migrates them when it becomes available.
 
 ## Upcoming(considered)
 - Sum-up by LLM
@@ -18,8 +24,14 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 
 ## How It Works
 
-1. Creates a `.code-tracking.log` file in a seperate repo.
-2. Logs your activity every `n` minutes with a timestamp and workspace path.
+1.  **Configuration:** Upon activation, the extension prompts you to enter your GitHub personal access token and username. You can also configure the local repository directory and logging interval in VS Code settings.
+2.  **Repository Setup:** The extension checks for a dedicated GitHub repository named `github-tracker`. If it doesn't exist, the extension creates a new private repository for you. The repository is then cloned to your local machine. If the local directory is not a git repo it initializes one automatically.
+3.  **Activity Logging:** At the configured interval (default: 30 minutes), the extension scans your open workspace folders. For each folder, it:
+    *   Checks if the folder is a Git repository. If not, it initializes one.
+    *   Retrieves recent commits (since the last log interval).
+    *   Captures information about *uncommitted* file changes using `git status`.
+    *   Records the data to a log file (JSON format) locally, either in the `github-tracker` repository (if set up) or in a temporary directory.
+4.  **Logging to Repository:** If the `github-tracker` repository is available, the extension commits and pushes the log files to your GitHub repository. If the repository is not yet set up (e.g., due to authentication issues), logs are stored temporarily and migrated to the repository once it becomes available.
 
 ## Installation
 
@@ -30,6 +42,24 @@ A productivity-focused VS Code extension that tracks coding contributions more a
    - Go to the Extensions view (`Ctrl+Shift+X` or `Cmd+Shift+X` on macOS).
    - Click the "..." menu and select "Install from VSIX".
    - Select the downloaded `.vsix` file.
+
+## Configuration
+
+1.  **GitHub Token:**
+    *   Go to your GitHub settings: [https://github.com/settings/tokens](https://github.com/settings/tokens)
+    *   Click "Generate new token" (or "Generate new token (classic)").
+    *   Give the token a descriptive name.
+    *   Select the `repo` scope (or appropriate granular repo permissions).
+    *   Click "Generate token".
+    *   Copy the generated token. *Keep it secure!*
+2.  **VS Code Settings:**
+    *   Open VS Code settings (`File` > `Preferences` > `Settings` or `Code` > `Preferences` > `Settings` on macOS).
+    *   Search for "Code Tracking".
+    *   Configure the following:
+        *   `codeTracking.githubToken`: Your GitHub personal access token.
+        *   `codeTracking.githubUsername`: Your GitHub username.
+        *   `codeTracking.repoDir` (Optional): The local directory for the `github-tracker` repository (defaults to `~/github-tracker`).
+        *   `codeTracking.logInterval` (Optional): The logging interval in minutes (default: 30).
 
 ## Usage
 
@@ -56,16 +86,6 @@ A productivity-focused VS Code extension that tracks coding contributions more a
 3. Launch the extension in VS Code:
    - Open the project folder.
    - Press F5 to launch a new Extension Development Host window.
-4. Configure:
-   - The GitHub token is used to authenticate the GitHub API requests made by the extension. To get a GitHub token, you can follow these steps:
-        1 Go to your GitHub account settings page (https://github.com/settings).  
-        2 Click on "Developer settings" in the left sidebar.  
-        3 Click on "Personal access tokens" in the left sidebar.  
-        4 Click on "Generate new token" button.  
-        5 Give your token a name and select the scopes that you need for the extension. For this extension, you will need the repo scope to create and manage repositories.  
-        6 Click on "Generate token" button.  
-        7 Copy the generated token and use it to set the GitHub token in the extension.
-    - You can set the GitHub token in the extension by using the command palette (Ctrl+Shift+P or Cmd+Shift+P on Mac) and selecting the "Set GitHub Token" command. Then, you can paste the token in the input box that appears.
 
 ## Contributing
 
@@ -73,4 +93,4 @@ Contributions are welcome! Open issues for suggestions or submit pull requests.
 
 ## License
 
-This project is open-source under the MIT License. See LICENSE for details.
+This project is open-source under the MIT License. See [MIT License](LICENSE) details.

@@ -12,31 +12,36 @@
   ],
   "main": "./extension.js",
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onCommand:codeTracking.enable",
+    "onCommand:codeTracking.disable",
+    "onCommand:codeTracking.setGitHubToken",
+    "onCommand:codeTracking.setRepoDir",
+    "onCommand:codeTracking.setGitHubUsername"
   ],
   "contributes": {
     "configuration": {
       "type": "object",
       "title": "Code Tracking Configuration",
       "properties": {
-        "codeTracking.githubToken": {                                                                                                                   
-           "type": "string",                                                                                                                             
-           "default": "",                                                                                                                                
-           "description": "GitHub token for authenticating API requests."                                                                                
-         },                                                                                                                                              
-         "codeTracking.repoDir": {                                                                                                                       
-           "type": "string",                                                                                                                             
-           "default": "",                                                                                                                                
-           "description": "Directory where the repository will be cloned."                                                                               
-         }, 
-         "codeTracking.githubUsername": {                                                                                                                    
-       "type": "string",                                                                                                                                 
-       "default": "",                                                                                                                                    
-       "description": "GitHub username for authenticating API requests."                                                                                 
-     },
+        "codeTracking.githubToken": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub token for authenticating API requests."
+        },
+        "codeTracking.repoDir": {
+          "type": "string",
+          "default": "",
+          "description": "Directory where the repository will be cloned."
+        },
+        "codeTracking.githubUsername": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub username for authenticating API requests."
+        },
         "codeTracking.logInterval": {
           "type": "number",
-          "default": 30,
+          "default": 0.5,
           "description": "Interval in minutes for logging commits."
         }
       }
@@ -58,10 +63,10 @@
         "command": "codeTracking.setRepoDir",
         "title": "Set Repository Directory"
       },
-      {                                                                                                                                                   
-       "command": "codeTracking.setGitHubUsername",                                                                                                      
-       "title": "Set GitHub Username"                                                                                                                    
-     }
+      {
+        "command": "codeTracking.setGitHubUsername",
+        "title": "Set GitHub Username"
+      }
     ]
   },
   "scripts": {
@@ -76,6 +81,7 @@
     "eslint": "^9.16.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "@octokit/rest": "^18.5.3" 
+    "@octokit/rest": "^19.0.7",
+    "simple-git": "^3.17.0"
   }
 }
