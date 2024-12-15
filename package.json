@@ -75,15 +75,13 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/node": "20.x", 
-    "@types/vscode": "^1.95.0",
-    "@types/mocha": "^10.0.1",
-    "@types/simple-git": "^3.16.0",
-    "@octokit/rest": "^19.0.7",
+"@types/vscode": "^1.95.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "eslint": "^9.16.0",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1",
-    "eslint": "^8.45.0",
-  },
+    "@vscode/test-electron":
+	},
   "dependencies": {
     "simple-git": "^3.17.0"
   }
