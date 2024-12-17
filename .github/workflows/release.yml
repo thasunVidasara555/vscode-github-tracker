@@ -30,14 +30,16 @@ jobs:
       - name: Package extension
         id: package
         run: |
-          VSIX_PATH=$(vsce package --out ./)
-          echo "::set-output name=vsix_file::$(echo "$VSIX_PATH" | grep -oP 'Packaged: \K.*')"
+          vsce package --out dist/
+          ls -l dist/ # Debug: List files in dist/
+          VSIX_FILE=$(find dist -name "*.vsix" -print -quit)
+          echo "::set-output name=vsix_file::$VSIX_FILE" # Correct output
 
       - name: Create Release
         id: create_release
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.TOKEN_G }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { data: release } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
@@ -51,7 +53,7 @@ jobs:
       - name: Upload VSIX to release
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_G }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.package.outputs.vsix_file }}
