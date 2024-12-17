@@ -30,9 +30,9 @@ jobs:
       - name: Package extension
         id: package
         run: |
-          vsce package --out dist/
-          ls -l dist/ # Debug: List files in dist/
-          VSIX_FILE=$(find dist -name "*.vsix" -print -quit)
+          vsce package --out ./
+          ls -l ./ # Debug: List files in dist/
+          VSIX_FILE=$(find . -name "*.vsix" -print -quit)
           echo "::set-output name=vsix_file::$VSIX_FILE" # Correct output
 
       - name: Create Release
