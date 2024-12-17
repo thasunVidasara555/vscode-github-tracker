@@ -2,8 +2,8 @@ name: Release VSIX
 
 on:
   push:
-    tags:
-      - 'v*' # Trigger on tags like v1.0.0, v2.3.4
+    # tags:
+    #   - 'v*' # Trigger on tags like v1.0.0, v2.3.4
 
 jobs:
   release:
@@ -33,23 +33,22 @@ jobs:
           VSIX_PATH=$(vsce package --out ./)
           echo "::set-output name=vsix_file::$(echo "$VSIX_PATH" | grep -oP 'Packaged: \K.*')"
 
-      - name: Create Release # Moved this step UP
-        id: create_release # Give it an ID
-        uses: actions/create-release@v1
+      - name: Create Release and Upload VSIX
+        id: release_and_upload
+        run: |
+          # Create Release
+          RELEASE_URL=$(gh release create "${{ github.ref }}" --generate-notes --repo ${{ github.repository }} --title "Release ${{ github.ref }}" | grep -oP '{.*"upload_url":.*?"(.*?)"' | sed 's/.*"\(.*\)".*/\1/')
+          echo "::set-output name=upload_url::$RELEASE_URL"
+
+          # Package extension
+          vsce package --out dist/
+          ls -l dist/
+          VSIX_FILE=$(find dist -name "*.vsix" -print -quit)
+
+          # Upload VSIX to release
+          curl --header "Authorization: token ${{ secrets.TOKEN_G }}" \
+               --header "Content-Type: application/zip" \
+               --data-binary @"$VSIX_FILE" \
+               "$RELEASE_URL?name=vscode-github-tracker-${{ github.ref_name }}.vsix" # Use tag name
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_G }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload VSIX to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/${{ steps.package.outputs.vsix_file }}
-          asset_name: vscode-github-tracker-${{ github.ref_name }}.vsix
-          asset_content_type: application/zip
