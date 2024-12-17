@@ -83,7 +83,13 @@
     "eslint": "^9.16.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
+<<<<<<< HEAD
     "@octokit/rest": "^19.0.7",
+=======
+    "eslint": "^8.45.0"
+  },
+  "dependencies": {
+>>>>>>> 06c1c543fdff92f008a3092a5950057e6aeeb101
     "simple-git": "^3.17.0"
   },
     "dependencies": {
