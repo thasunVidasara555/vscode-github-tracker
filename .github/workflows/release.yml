@@ -41,9 +41,9 @@ jobs:
           echo "::set-output name=upload_url::$RELEASE_URL"
 
           # Package extension
-          vsce package --out dist/
-          ls -l dist/
-          VSIX_FILE=$(find dist -name "*.vsix" -print -quit)
+          vsce package --out ./
+          ls -l ./
+          VSIX_FILE=$(find . -name "*.vsix" -print -quit)
 
           # Upload VSIX to release
           curl --header "Authorization: token ${{ secrets.TOKEN_G }}" \
