@@ -28,7 +28,10 @@ jobs:
       #  run: npm run compile
 
       - name: Package extension
-        run: vsce package
+        id: package
+        run: |
+          VSIX_PATH=$(vsce package --out ./)
+          echo "::set-output name=vsix_file::$(echo "$VSIX_PATH" | grep -oP 'Packaged: \K.*')"
 
       - name: Create Release # Moved this step UP
         id: create_release # Give it an ID
@@ -44,9 +47,9 @@ jobs:
       - name: Upload VSIX to release
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_G }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # Use the output!
-          asset_path: ${{ github.workspace }}/vscode-github-tracker-${{ github.ref_name }}.vsix
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.package.outputs.vsix_file }} # Use the captured path!
           asset_name: vscode-github-tracker-${{ github.ref_name }}.vsix
           asset_content_type: application/zip
